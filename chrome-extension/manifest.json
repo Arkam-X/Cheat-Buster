@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Cheat Buster Monitor",
+  "version": "1.0",
+  "description": "Tracks active websites during interviews for transparency.",
+  "permissions": [
+    "tabs"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
