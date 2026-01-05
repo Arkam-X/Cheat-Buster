@@ -59,8 +59,8 @@ Cheat Buster solves this by:
 
 ## ⚙️ Setup Instruction
 
-1️⃣ Clone the Repository
 ```bash
+1️⃣ Clone the Repository
 git clone https://github.com/Arkam-X/Cheat-Buster.git
 cd Cheat-Buster
 
