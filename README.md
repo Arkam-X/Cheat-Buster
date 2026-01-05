@@ -2,7 +2,7 @@
 
 Online interviews have introduced a new challenge: Where Candidates can use AI tools and hidden browser tabs that are **not visible** to interviewers during screen sharing.
 
-**Cheat Buster** is a hybrid **desktop + browser transparency system** designed to prevent AI-assisted cheating during online interviews by making all active applications and websites **visibly transparent** to the interviewer via screen sharing.
+**🛡️ Cheat Buster** is a hybrid **desktop + browser transparency system** designed to prevent AI-assisted cheating during online interviews by making all active applications and websites **visibly transparent** to the interviewer via screen sharing.
 
 Cheatings in Online Interviews! Not any more.
 
@@ -30,7 +30,7 @@ Cheat Buster solves this by:
 
 ---
 
-## Working
+## 🧠 Architechtural Workflow
 
 ![Cheat Buster Workflow -](workflow.png)
 
@@ -57,9 +57,9 @@ Cheat Buster solves this by:
 
 ---
 
-## Setup Instruction
+## ⚙️ Setup Instruction
 
-### 1️⃣ Clone the Repository
+1️⃣ Clone the Repository
 ```bash
 git clone https://github.com/Arkam-X/Cheat-Buster.git
 cd Cheat-Buster
