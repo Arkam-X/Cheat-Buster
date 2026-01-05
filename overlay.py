@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QHBoxLayout
 from PyQt6.QtCore import Qt, QTimer, QPoint
 from process_tracker import get_visible_apps
+from ws_server import browser_state, browser_state_lock
 
 class Overlay(QWidget):
     def __init__(self):
@@ -84,6 +85,10 @@ class Overlay(QWidget):
     def update_overlay(self):
         os_apps = get_visible_apps()
 
+        # 🔐 Safely read browser data
+        with browser_state_lock:
+            live_browser_data = dict(browser_state)
+
         text = "Active Applications\n"
         text += "-------------------\n"
         text += "\n".join(os_apps) if os_apps else "No active apps"
@@ -91,7 +96,17 @@ class Overlay(QWidget):
 
         text += "Active Websites\n"
         text += "---------------\n"
-        text += "Chrome:\n • (waiting for browser data…)"
+
+        if not live_browser_data or all(len(tabs) == 0 for tabs in live_browser_data.values()):
+            text += "Chrome:\n • (waiting for browser data…)"
+        else:
+            for browser, tabs in live_browser_data.items():
+                text += f"{browser}:\n"
+                if tabs:
+                    for tab in tabs:
+                        text += f" • {tab}\n"
+                else:
+                    text += " • (no active tabs)\n"
 
         self.content.setText(text)
 

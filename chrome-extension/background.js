@@ -1,3 +1,30 @@
+const WS_URL = "ws://localhost:8765";
+let socket = null;
+
+// 🔹 Open (or reopen) WebSocket
+function connectWebSocket() {
+  if (socket && socket.readyState === WebSocket.OPEN) {
+    return;
+  }
+
+  socket = new WebSocket(WS_URL);
+
+  socket.onopen = () => {
+    console.log("✅ Connected to Python WebSocket server");
+    sendTabs(); // send immediately on connect
+  };
+
+  socket.onerror = (err) => {
+    console.error("❌ WebSocket error", err);
+  };
+
+  socket.onclose = () => {
+    console.warn("⚠ WebSocket closed. Reconnecting...");
+    socket = null;
+  };
+}
+
+// 🔹 Extract domain safely
 function getDomain(url) {
   try {
     return new URL(url).hostname;
@@ -6,36 +33,46 @@ function getDomain(url) {
   }
 }
 
-function logActiveTabs() {
+// 🔹 Collect all tab titles
+function sendTabs() {
   chrome.tabs.query({}, (tabs) => {
-    console.clear();
-    console.log("Active Websites:");
+    const titles = tabs.map(tab => tab.title).filter(Boolean);
 
-    tabs.forEach(tab => {
-      console.log(
-        `• ${tab.title} (${getDomain(tab.url)})`
-      );
-    });
+    const payload = {
+      browser: "Chrome",
+      tabs: titles
+    };
+
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify(payload));
+      console.log("📤 Sent tabs to desktop app:", payload);
+    }
   });
 }
 
-// 🔹 Trigger when extension loads
+/* =====================
+   EVENT TRIGGERS
+   ===================== */
+
+// When extension installs / reloads
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("Interview Transparency Monitor installed");
-  logActiveTabs();
+  connectWebSocket();
 });
 
-// 🔹 Trigger when a tab becomes active
+// When user switches tabs
 chrome.tabs.onActivated.addListener(() => {
-  logActiveTabs();
+  connectWebSocket();
+  sendTabs();
 });
 
-// 🔹 Trigger when tab URL or title changes
+// When tab URL or title changes
 chrome.tabs.onUpdated.addListener(() => {
-  logActiveTabs();
+  connectWebSocket();
+  sendTabs();
 });
 
-// 🔹 Trigger when a tab is closed
+// When tab closes
 chrome.tabs.onRemoved.addListener(() => {
-  logActiveTabs();
+  connectWebSocket();
+  sendTabs();
 });
